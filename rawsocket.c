@@ -10,7 +10,7 @@
 #include <sys/socket.h>
 #include <sys/wait.h>
 
-#define RAW_SOCK_HELPER "rawsocket_helper"
+#define RAW_SOCK_HELPER "rawsocket-helper"
 
 static int spawn_helper(int fd)
 {
