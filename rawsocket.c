@@ -27,10 +27,21 @@ static int spawn_helper(int fd)
 		/* child */
 		char fd_str[8];
 		char *argv[] = { RAW_SOCK_HELPER, fd_str, NULL };
-		char *envp[] = { NULL };
+		char *pathenv = NULL;
+		char *envp[] = { pathenv, NULL };
+		char *path = getenv("PATH");
+
+		if (path) {
+			pathenv = malloc(6+strlen(path));
+			if (!pathenv) {
+				exit(1);
+			}
+			sprintf(pathenv, "PATH=%s", path);
+			envp[0] = pathenv;
+		}
 
 		snprintf(fd_str, sizeof(fd_str), "%d", fd);
-		execve(argv[0], argv, envp);
+		execvpe(argv[0], argv, envp);
 		exit(1);
 	}
 
@@ -38,7 +49,9 @@ static int spawn_helper(int fd)
 	if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
 		return 0;
 
-	PyErr_Format(PyExc_IOError, "Could not spawn helper '%s'.", RAW_SOCK_HELPER);
+	PyErr_Format(PyExc_IOError, "Could not spawn helper '%s' (not SUID root?).",
+			RAW_SOCK_HELPER);
+
 	return -1;
 }
 
