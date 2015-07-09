@@ -15,7 +15,11 @@ with open('README.rst') as f:
     readme = f.read()
 version = '0.1'
 
-mod_rawsocket = Extension('rawsocket', sources = ['rawsocket.c'])
+mod_rawsocket = Extension(
+    name = 'rawsocket',
+    sources = ['rawsocket.c'],
+    define_macros = [('VERSION', '"%s"' % version)],
+)
 
 class run_build_helper(Command):
     description = 'Build helper binary'

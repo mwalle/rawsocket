@@ -139,9 +139,15 @@ static PyMethodDef rawsocket_methods[] = {
 PyMODINIT_FUNC
 initrawsocket(void)
 {
-	PyObject *m;
+	PyObject *m, *ver;
+
+	ver = PyString_FromString(VERSION);
+	if (ver == NULL)
+		return;
 
 	m = Py_InitModule("rawsocket", rawsocket_methods);
 	if (m == NULL)
 		return;
+
+	PyModule_AddObject(m, "__version__", ver);
 }
