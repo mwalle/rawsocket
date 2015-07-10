@@ -1,14 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from distutils.core import setup, Extension, Command
-from distutils import ccompiler, log
-from distutils.command.build import build
-from distutils.command.clean import clean
-from distutils.command.install import install
-from distutils.dir_util import remove_tree
 import sys
 import os
+
+# pip monkeypatches setup.py to always use setuptools. Unfortunately, this does
+# not work if we subclass our install command from
+# distutils.command.install.install. Therefore, we try to import the setuptools
+# package first.
+try:
+    from setuptools import setup, Extension, Command
+    from setuptools.command.install import install
+except ImportError:
+    from distutils.core import setup, Extension, Command
+    from distutils.command.install import install
+
+from distutils.core import setup, Extension, Command
+from distutils.command.build import build
+from distutils.command.clean import clean
+from distutils import ccompiler, log
+from distutils.dir_util import remove_tree
 
 name = 'rawsocket'
 with open('README.rst') as f:
