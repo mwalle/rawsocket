@@ -1,0 +1,1 @@
+python-netifaces compiles (and installs) its own shared object, too.
