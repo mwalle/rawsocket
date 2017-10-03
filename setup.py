@@ -24,7 +24,7 @@ from distutils.dir_util import remove_tree
 name = 'rawsocket'
 with open('README.rst') as f:
     readme = f.read()
-version = '0.1.2'
+version = '0.2.0'
 
 mod_rawsocket = Extension(
     name = 'rawsocket',

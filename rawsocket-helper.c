@@ -12,7 +12,6 @@
  */
 
 #include <arpa/inet.h>
-#include <net/ethernet.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -50,27 +49,27 @@ int main(int argc, char **argv)
 	int rc;
 	int fd, raw_fd;
 	char *endp;
-	int protocol;
+	int family, protocol;
 	int ret = EXIT_FAILURE;
 
 	/* argument parsing */
-	if (argc < 2 || argc > 3)
+	if (argc != 4)
+		goto out;
+	
+	protocol = strtol(argv[3], &endp, 10);
+	if (*argv[3] && *endp)
 		goto out;
 
-	if (argc == 3) {
-		protocol = strtol(argv[2], &endp, 10);
-		if (*argv[2] && *endp)
-			goto out;
-	} else {
-		protocol = ETH_P_ALL;
-	}
+	family = strtol(argv[2], &endp, 10);
+	if (*argv[2] && *endp)
+		goto out;
 
 	fd = strtol(argv[1], &endp, 10);
-	if (*endp)
+	if (*argv[1] && *endp)
 		goto out;
 
 	/* open raw socket */
-	raw_fd = socket(AF_PACKET, SOCK_RAW, htons(protocol));
+	raw_fd = socket(family, SOCK_RAW, protocol);
 	if (raw_fd == -1)
 		goto out;
 
