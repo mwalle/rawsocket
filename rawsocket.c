@@ -50,12 +50,8 @@ static int spawn_helper(int fd, int family, int protocol)
 	}
 
 	waitpid(pid, &status, 0);
-	if (WIFEXITED(status)) {
-		int exit_status = WEXITSTATUS(status);
-		if(exit_status == 0) {
-			return 0;
-		}
-	}
+	if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+		return 0;
 
 	PyErr_Format(PyExc_IOError, "Could not spawn helper '%s' (not SUID root?).",
 			RAW_SOCK_HELPER);
@@ -126,7 +122,6 @@ rawsocket_fd(PyObject *self, PyObject *args, PyObject *kwargs)
 	int protocol = ETH_P_ALL;
 	char* keywords[] = {"family", "protocol", NULL};
 	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|ii", keywords, &family, &protocol))
-	// if (!PyArg_ParseTuple(args, "ii", &family, &protocol))
 		return NULL;
 
 	fd = raw_socket(family, protocol);
