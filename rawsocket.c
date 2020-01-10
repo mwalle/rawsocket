@@ -122,7 +122,7 @@ rawsocket_fd(PyObject *self, PyObject *args)
 	if (fd < 0)
 		return NULL;
 
-	return PyInt_FromLong(fd);
+	return PyLong_FromLong(fd);
 }
 
 PyDoc_STRVAR(rawsocket_fd_doc,
@@ -136,18 +136,43 @@ static PyMethodDef rawsocket_methods[] = {
 	{NULL, NULL}
 };
 
+#if PY_MAJOR_VERSION >= 3
+static struct PyModuleDef rawsocket_def = {
+	PyModuleDef_HEAD_INIT,
+	"rawsocket",
+	"A Python module to create raw sockets as unprivileged user.",
+	-1,
+	rawsocket_methods
+};
+#endif
+
 PyMODINIT_FUNC
+#if PY_MAJOR_VERSION >= 3
+PyInit_rawsocket(void)
+#else
 initrawsocket(void)
+#endif
 {
-	PyObject *m, *ver;
+	PyObject *m = NULL, *ver;
 
-	ver = PyString_FromString(VERSION);
+	ver = PyUnicode_FromString(VERSION);
 	if (ver == NULL)
-		return;
+		goto out;
 
+#if PY_MAJOR_VERSION >= 3
+	m = PyModule_Create(&rawsocket_def);
+#else
 	m = Py_InitModule("rawsocket", rawsocket_methods);
+#endif
 	if (m == NULL)
-		return;
+		goto out;
 
 	PyModule_AddObject(m, "__version__", ver);
+
+out:
+#if PY_MAJOR_VERSION >= 3
+	return m;
+#else
+	return;
+#endif
 }
