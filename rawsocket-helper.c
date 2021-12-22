@@ -14,6 +14,8 @@
 #include <arpa/inet.h>
 #include <net/ethernet.h>
 #include <stdlib.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 int send_socket(int fd, int sfd)
